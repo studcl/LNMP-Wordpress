@@ -15,7 +15,7 @@ Nginx (engine x) 是一个高性能的HTTP和反向代理web服务器，同时�
 MySQL是一种开放源代码的关系型数据库管理系统(RDBMS)，使用最常用的数据库管理语言--结构化查询语言(SQL)进行数据库管理。MySQL不仅是开放源代码的，也因为其速度、可靠性和适应性而备受关注。大多数人都认为在不需要事务化处理的情况下，MySQL是管理内容最好的选择。
 
 PHP即“超文本预处理器”，是一种通用开源脚本语言。PHP是在服务器端执行的脚本语言，与C语言类似，是常用的网站编程语言。因为PHP的开源性、免费性、快捷性等特点使其成为目前最流行的编程语言。
-![image-20240309202102789](C:\Users\86183\AppData\Roaming\Typora\typora-user-images\image-20240309202102789.png)
+https://github.com/studcl/LNMP-Wordpress/blob/master/image-20240309202102789.png
 第一步：用户在浏览器输入域名或者IP访问网站
 
 第二步：用户在访问网站的时候，向web服务器发出http request请求，服务器响应并处理web请求，返回静态网页资源，如CSS、picture、video等，然后缓存在用户主机上。
