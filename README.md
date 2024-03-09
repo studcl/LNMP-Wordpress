@@ -162,7 +162,7 @@ index.html  test.php  wordpress  wordpress-6.4.3-zh_CN.tar.gz
 ##成功后在浏览器访问http://IP:8066/index.php
 ```
 
-![image-20240309204427833](C:\Users\86183\AppData\Roaming\Typora\typora-user-images\image-20240309204427833.png)
+![image-20240309204427833](https://github.com/studcl/LNMP-Wordpress/blob/master/image-20240309204427833.png)
 
 ```
 ##进入mysql容器创建数据库
@@ -172,13 +172,13 @@ MariaDB [(none)]> create database wordpress;
 
 ```
 
-![image-20240309204652200](C:\Users\86183\AppData\Roaming\Typora\typora-user-images\image-20240309204652200.png)
+![image-20240309204652200](https://github.com/studcl/LNMP-Wordpress/blob/master/image-20240309204652200.png)
 
 ```
 ##创建wp-config.php文件
 ```
 
-![image-20240309204746470](C:\Users\86183\AppData\Roaming\Typora\typora-user-images\image-20240309204746470.png)
+![image-20240309204746470](https://github.com/studcl/LNMP-Wordpress/blob/master/image-20240309204746470.png)
 
 ```
 ##进入wordpress数据目录
