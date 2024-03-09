@@ -188,4 +188,4 @@ MariaDB [(none)]> create database wordpress;
 [root@master wordpress]# vi wp-config.php ##将复制的内容拷贝进去
 ```
 
-![image-20240309205000849](C:\Users\86183\AppData\Roaming\Typora\typora-user-images\image-20240309205000849.png)
+![image-20240309205000849](https://github.com/studcl/LNMP-Wordpress/blob/master/image-20240309205000849.png)
