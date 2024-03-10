@@ -27,6 +27,10 @@ RUN make install
 #添加一个名为nginx的系统组，然后创建一个属于这个组的同名系统用户
 RUN groupadd -r nginx && \  
     useradd -r -g nginx nginx
+#更改配置文件
+COPY ./nginx.conf /usr/local/nginx/conf/nginx.conf
+#输出日志
+RUN ln -sf /dev/stdout /usr/local/nginx/logs/access.log && ln -sf /dev/stderr /usr/local/nginx/logs/error.log
 #声明容器在运行时应该监听的网络端口号
 EXPOSE 80
 #设置容器启动时执行的默认命令。这里使用Nginx的可执行文件来启动Nginx服务，并通过-g选项设置Nginx不以守护进程模式运行（即在前台运行）
