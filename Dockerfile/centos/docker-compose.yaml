@@ -15,7 +15,7 @@ services:
     ports:
       - 8066:80
     volumes:
-      -  /root/Dockerfile/centos/nginx/nginx.conf:/usr/local/nginx/conf/nginx.conf
+      -  /root/Dockerfile/centos/data/nginx.conf:/usr/local/nginx/conf/nginx.conf
       - /root/Dockerfile/centos/data/wordpress/:/data/wordpress/
     depends_on:
       - php
