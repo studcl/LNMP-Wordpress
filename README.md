@@ -29,10 +29,11 @@ PHP即“超文本预处理器”，是一种通用开源脚本语言。PHP是�
 
 ```
 git clonehttps://github.com/studcl/LNMP-Wordpress.git
-./
+Dockerfile/
 ├── centos
 │   ├── data
 │   │   ├── index.html
+│   │   ├── nginx.conf
 │   │   ├── test.php
 │   │   └── wordpress-6.4.3-zh_CN.tar.gz
 │   ├── docker-compose.yaml
@@ -40,14 +41,13 @@ git clonehttps://github.com/studcl/LNMP-Wordpress.git
 │   │   ├── Dockerfile
 │   │   └── init.sh
 │   ├── nginx
-│   │   ├── Dockerfile
 │   │   ├── nginx-1.22.1.tar.gz
 │   │   └── nginx.conf
 │   └── php
 │       ├── Dockerfile
 │       ├── php-8.3.3.tar.gz
 │       └── set-php-config.sh
-└── ubuntu  ##ubuntu还在开发中......
+└── ubuntu
     ├── mysql
     │   ├── Dockerfile
     │   └── init.sh
@@ -78,7 +78,7 @@ services:
     ports:
       - 8066:80 ##根据个人情况修改端口
     volumes:
-      -  /root/Dockerfile/centos/nginx/nginx.conf:/usr/local/nginx/conf/nginx.conf ##根据实际情况修改
+      -  /root/Dockerfile/centos/data/nginx.conf:/usr/local/nginx/conf/nginx.conf ##根据实际情况修改
       - /root/Dockerfile/centos/data/wordpress/:/data/wordpress/ ##根据实际情况修改
     depends_on:
       - php
@@ -95,14 +95,14 @@ networks:
   wordpress:
 
 
-[root@master nginx]# cat nginx.conf 
+[root@master data]# cat nginx.conf 
 user  nobody;  
 worker_processes  1;  
+
+#设置对应的日志目录
+error_log  /usr/local/nginx/logs/error.log notice;
+pid        /usr/local/nginx/logs/nginx.pid;
   
-# 注释掉错误日志记录，如果需要记录，请取消注释并选择相应的日志级别  
-  error_log  logs/error.log;  
-  error_log  logs/error.log  notice;  
-  error_log  logs/error.log  info;  
   
 # PID 文件的位置  
 # pid        logs/nginx.pid;  
@@ -112,8 +112,14 @@ events {
 }  
   
 http {  
-    include       mime.types;  
+    include       /usr/local/nginx/conf/mime.types;  
     default_type  application/octet-stream;  
+    
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+    access_log  /usr/local/nginx/logs/access.log  main;
+
   
     # 开启高效文件传输模式  
     sendfile        on;  
@@ -141,7 +147,7 @@ http {
         # PHP 脚本处理配置  
         location ~ \.php$ {  
             root           /data/wordpress;  
-            fastcgi_pass   192.168.199.10:9001;  # PHP-FPM 监听地址和端口   根据个人情况修改
+            fastcgi_pass   192.168.199.10:9000;  # PHP-FPM 监听地址和端口  根据实际情况更改
             fastcgi_index  index.php;  
             fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;  
             include        fastcgi_params;  
@@ -151,12 +157,12 @@ http {
 
 ##解压Wordpress压缩包
 [root@master data]# ls
-index.html  test.php  wordpress-6.4.3-zh_CN.tar.gz
+index.html  test.php  wordpress-6.4.3-zh_CN.tar.gz nginx.conf
 [root@master data]# pwd
 /root/Dockerfile/centos/data
 [root@master data]# tar -zxf wordpress-6.4.3-zh_CN.tar.gz 
 [root@master data]# ls
-index.html  test.php  wordpress  wordpress-6.4.3-zh_CN.tar.gz
+index.html  test.php  wordpress  wordpress-6.4.3-zh_CN.tar.gz nginx.conf
 ##启动docker-compose
 [root@master centos]# docker-compose up -d
 ##成功后在浏览器访问http://IP:8066/index.php
