@@ -2,28 +2,28 @@ version: '3'
 services:
   php:
     container_name: php-wordpress
-    image: php-test:1.0
+    image: php-centos:1.0
     ports:
       - 9001:9000
     networks:
       - wordpress
     volumes:
-      - /root/Dockerfile/centos/data/wordpress/:/data/wordpress/
+      - ./data/wordpress/:/data/wordpress/
   nginx:
     container_name: nginx-wordpress
-    image: nginx-test:1.0
+    image: nginx-centos:1.0
     ports:
       - 8066:80
     volumes:
-      -  /root/Dockerfile/centos/data/nginx.conf:/usr/local/nginx/conf/nginx.conf
-      - /root/Dockerfile/centos/data/wordpress/:/data/wordpress/
+      -  ./data/nginx.conf:/usr/local/nginx/conf/nginx.conf
+      - ./data/wordpress/:/data/wordpress/
     depends_on:
       - php
     networks:
       - wordpress
   mysql:
     container_name: mysql-wordpress
-    image: mysql-test:1.0
+    image: mysql-centos:1.0
     ports:
       - 3311:3306
     networks:
