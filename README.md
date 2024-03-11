@@ -29,32 +29,39 @@ PHP即“超文本预处理器”，是一种通用开源脚本语言。PHP是�
 
 ```
 git clonehttps://github.com/studcl/LNMP-Wordpress.git
-Dockerfile/
-├── centos
-│   ├── data
-│   │   ├── index.html
-│   │   ├── nginx.conf
-│   │   ├── test.php
-│   │   └── wordpress-6.4.3-zh_CN.tar.gz
-│   ├── docker-compose.yaml
-│   ├── mysql
-│   │   ├── Dockerfile
-│   │   └── init.sh
-│   ├── nginx
-│   │   ├── nginx-1.22.1.tar.gz
-│   │   └── nginx.conf
-│   └── php
-│       ├── Dockerfile
-│       ├── php-8.3.3.tar.gz
-│       └── set-php-config.sh
-└── ubuntu
-    ├── mysql
-    │   ├── Dockerfile
-    │   └── init.sh
-    ├── nginx
-    │   └── Dockerfile
-    └── php
-        └── Dockerfile
+LNMP-Wordpress/
+├── Dockerfile
+│   ├── centos
+│   │   ├── data
+│   │   │   ├── index.html
+│   │   │   ├── nginx.conf
+│   │   │   ├── test.php
+│   │   │   └── wordpress-6.4.3-zh_CN.tar.gz
+│   │   ├── docker-compose.yaml
+│   │   ├── mysql
+│   │   │   ├── Dockerfile
+│   │   │   └── init.sh
+│   │   ├── nginx
+│   │   │   ├── Dockerfile
+│   │   │   ├── nginx-1.22.1.tar.gz
+│   │   │   └── nginx.conf
+│   │   └── php
+│   │       ├── Dockerfile
+│   │       ├── php-8.3.3.tar.gz
+│   │       └── set-php-config.sh
+│   └── ubuntu
+│       ├── mysql
+│       │   ├── 50-server.cnf
+│       │   ├── Dockerfile
+│       │   └── init.sh
+│       ├── nginx
+│       │   ├── Dockerfile
+│       │   ├── nginx.conf
+│       │   └── nginx-wordpress.conf
+│       └── php
+│           ├── Dockerfile
+│           ├── php-8.3.3.tar.gz
+│           └── set-php-config.sh
 ##依次构建MYSQL、Nginx、php镜像
 ```
 
@@ -65,30 +72,30 @@ version: '3'
 services:
   php:
     container_name: php-wordpress
-    image: php-test:1.0 ##根据镜像名字修改
+    image: php-centos:1.0 #根据实际镜像名称更改
     ports:
-      - 9001:9000 ##根据个人情况修改端口
+      - 9001:9000 
     networks:
       - wordpress
     volumes:
-      - /root/Dockerfile/centos/data/wordpress/:/data/wordpress/ ##根据实际情况修改
+      - ./data/wordpress/:/data/wordpress/ #根据实际情况更改
   nginx:
     container_name: nginx-wordpress
-    image: nginx-test:1.0 ##根据镜像名字修改
+    image: nginx-centos:1.0 #根据实际镜像名称更改
     ports:
-      - 8066:80 ##根据个人情况修改端口
+      - 8066:80
     volumes:
-      -  /root/Dockerfile/centos/data/nginx.conf:/usr/local/nginx/conf/nginx.conf ##根据实际情况修改
-      - /root/Dockerfile/centos/data/wordpress/:/data/wordpress/ ##根据实际情况修改
+      -  ./data/nginx.conf:/usr/local/nginx/conf/nginx.conf #根据实际情况更改
+      - ./data/wordpress/:/data/wordpress/ #根据实际情况更改
     depends_on:
       - php
     networks:
       - wordpress
   mysql:
     container_name: mysql-wordpress
-    image: mysql-test:1.0 ##根据镜像名字修改
-    ports: 
-      - 3311:3306 ##根据个人情况修改端口
+    image: mysql-centos:1.0 #根据实际镜像名称更改
+    ports:
+      - 3311:3306
     networks:
       - wordpress
 networks:
@@ -158,8 +165,6 @@ http {
 ##解压Wordpress压缩包
 [root@master data]# ls
 index.html  test.php  wordpress-6.4.3-zh_CN.tar.gz nginx.conf
-[root@master data]# pwd
-/root/Dockerfile/centos/data
 [root@master data]# tar -zxf wordpress-6.4.3-zh_CN.tar.gz 
 [root@master data]# ls
 index.html  test.php  wordpress  wordpress-6.4.3-zh_CN.tar.gz nginx.conf
