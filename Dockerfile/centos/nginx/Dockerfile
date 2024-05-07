@@ -19,14 +19,14 @@ RUN ./configure --prefix=/usr/local/nginx \
 --with-pcre \ 
 --with-stream \ 
 --with-stream_ssl_module \ 
---with-stream_realip_module 
+--with-stream_realip_module && \
 #调用make命令来编译Nginx
-RUN make 
+make && \ 
 #调用make install命令来安装Nginx到之前通过--prefix指定的目录
-RUN make install
+make install && \ 
 #添加一个名为nginx的系统组，然后创建一个属于这个组的同名系统用户
-RUN groupadd -r nginx && \  
-    useradd -r -g nginx nginx
+groupadd -r nginx && \  
+useradd -r -g nginx nginx
 #更改配置文件
 COPY ./nginx.conf /usr/local/nginx/conf/nginx.conf
 #输出日志
@@ -35,4 +35,3 @@ RUN ln -sf /dev/stdout /usr/local/nginx/logs/access.log && ln -sf /dev/stderr /u
 EXPOSE 80
 #设置容器启动时执行的默认命令。这里使用Nginx的可执行文件来启动Nginx服务，并通过-g选项设置Nginx不以守护进程模式运行（即在前台运行）
 CMD ["/usr/local/nginx/sbin/nginx","-g","daemon off;"]
-
