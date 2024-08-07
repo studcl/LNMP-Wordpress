@@ -30,38 +30,39 @@ PHP即“超文本预处理器”，是一种通用开源脚本语言。PHP是�
 ```
 git clonehttps://github.com/studcl/LNMP-Wordpress.git
 LNMP-Wordpress/
-├── Dockerfile
-│   ├── centos
-│   │   ├── data
-│   │   │   ├── index.html
-│   │   │   ├── nginx.conf
-│   │   │   ├── test.php
-│   │   │   └── wordpress-6.4.3-zh_CN.tar.gz
-│   │   ├── docker-compose.yaml
-│   │   ├── mysql
-│   │   │   ├── Dockerfile
-│   │   │   └── init.sh
-│   │   ├── nginx
-│   │   │   ├── Dockerfile
-│   │   │   ├── nginx-1.22.1.tar.gz
-│   │   │   └── nginx.conf
-│   │   └── php
-│   │       ├── Dockerfile
-│   │       ├── php-8.3.3.tar.gz
-│   │       └── set-php-config.sh
-│   └── ubuntu
-│       ├── mysql
-│       │   ├── 50-server.cnf
-│       │   ├── Dockerfile
-│       │   └── init.sh
-│       ├── nginx
-│       │   ├── Dockerfile
-│       │   ├── nginx.conf
-│       │   └── nginx-wordpress.conf
-│       └── php
-│           ├── Dockerfile
-│           ├── php-8.3.3.tar.gz
-│           └── set-php-config.sh
+root@docker:~/LNMP-Wordpress# tree Dockerfile/
+Dockerfile/
+├── centos #centos由于repo已停止维护，所以暂不使用centos
+│   ├── mysql
+│   │   ├── Dockerfile
+│   │   └── init.sh
+│   ├── nginx
+│   │   ├── Dockerfile
+│   │   ├── nginx-1.22.1.tar.gz
+│   │   └── nginx.conf
+│   └── php
+│       ├── Dockerfile
+│       ├── php-8.3.3.tar.gz
+│       └── set-php-config.sh
+├── data
+│   ├── index.html
+│   ├── nginx.conf
+│   ├── test.php
+│   └── wordpress-6.4.3-zh_CN.tar.gz #wordpress的安装包
+├── docker-compose.yaml
+└── ubuntu
+    ├── mysql
+    │   ├── 50-server.cnf
+    │   ├── Dockerfile
+    │   └── init.sh #mysql初始化脚本
+    ├── nginx
+    │   ├── Dockerfile
+    │   ├── nginx.conf #构建nginx镜像所需要的配置文件
+    │   └── nginx-wordpress.conf #运行wordpress需要的配置文件
+    └── php
+        ├── Dockerfile
+        ├── php-8.3.3.tar.gz #php安装包
+        └── set-php-config.sh #设置php环境脚本
 ##依次构建MYSQL、Nginx、php镜像
 ```
 
@@ -72,28 +73,28 @@ version: '3'
 services:
   php:
     container_name: php-wordpress
-    image: php-centos:1.0 #根据实际镜像名称更改
+    image: lnmp-php:v1.1
     ports:
-      - 9001:9000 
+      - 9001:9000
     networks:
       - wordpress
     volumes:
-      - ./data/wordpress/:/data/wordpress/ #根据实际情况更改
+      - ./data/wordpress/:/data/wordpress/
   nginx:
     container_name: nginx-wordpress
-    image: nginx-centos:1.0 #根据实际镜像名称更改
+    image: lnmp-nginx:v1.1
     ports:
       - 8066:80
     volumes:
-      -  ./data/nginx.conf:/usr/local/nginx/conf/nginx.conf #根据实际情况更改
-      - ./data/wordpress/:/data/wordpress/ #根据实际情况更改
+      -  ./ubuntu/nginx/nginx-wordpress.conf:/etc/nginx/nginx.conf
+      - ./data/wordpress/:/data/wordpress/
     depends_on:
       - php
     networks:
       - wordpress
   mysql:
     container_name: mysql-wordpress
-    image: mysql-centos:1.0 #根据实际镜像名称更改
+    image: lnmp-mysql:v1.2
     ports:
       - 3311:3306
     networks:
@@ -102,13 +103,13 @@ networks:
   wordpress:
 
 
-[root@master data]# cat nginx.conf 
-user  nobody;  
+root@docker:~/LNMP-Wordpress/Dockerfile/ubuntu/nginx# cat nginx-wordpress.conf 
+user  nginx;  
 worker_processes  1;  
 
 #设置对应的日志目录
-error_log  /usr/local/nginx/logs/error.log notice;
-pid        /usr/local/nginx/logs/nginx.pid;
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
   
   
 # PID 文件的位置  
@@ -119,13 +120,13 @@ events {
 }  
   
 http {  
-    include       /usr/local/nginx/conf/mime.types;  
+    include       /etc/nginx/mime.types;  
     default_type  application/octet-stream;  
     
     log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
-    access_log  /usr/local/nginx/logs/access.log  main;
+    access_log  /var/log/nginx/access.log  main;
 
   
     # 开启高效文件传输模式  
@@ -154,7 +155,7 @@ http {
         # PHP 脚本处理配置  
         location ~ \.php$ {  
             root           /data/wordpress;  
-            fastcgi_pass   192.168.199.10:9000;  # PHP-FPM 监听地址和端口  根据实际情况更改
+            fastcgi_pass   192.168.199.100:9001;  # PHP-FPM 监听地址和端口 ，这里的IP根据个人情况更改
             fastcgi_index  index.php;  
             fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;  
             include        fastcgi_params;  
@@ -169,7 +170,7 @@ index.html  test.php  wordpress-6.4.3-zh_CN.tar.gz nginx.conf
 [root@master data]# ls
 index.html  test.php  wordpress  wordpress-6.4.3-zh_CN.tar.gz nginx.conf
 ##启动docker-compose
-[root@master centos]# docker-compose up -d
+[root@master Dockerfile]# docker-compose up -d
 ##成功后在浏览器访问http://IP:8066/index.php
 ```
 
@@ -177,7 +178,7 @@ index.html  test.php  wordpress  wordpress-6.4.3-zh_CN.tar.gz nginx.conf
 
 ```
 ##进入mysql容器创建数据库
-[root@master centos]# docker exec -it mysql-wordpress /bin/bash
+[root@master Dockerfile]# docker exec -it mysql-wordpress /bin/bash
 [root@c80c66120568 /]# mysql -uroot -p000000
 MariaDB [(none)]> create database wordpress;
 
@@ -194,7 +195,7 @@ MariaDB [(none)]> create database wordpress;
 ```
 ##进入wordpress数据目录
 [root@master wordpress]# pwd
-/root/Dockerfile/centos/data/wordpress
+/root/LNMP-Wordpress/Dockerfile/data/wordpress
 ##创建wp-config.php文件
 [root@master wordpress]# vi wp-config.php ##将复制的内容拷贝进去
 ```
