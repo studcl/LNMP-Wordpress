@@ -28,9 +28,11 @@ PHP即“超文本预处理器”，是一种通用开源脚本语言。PHP是�
 ## 2.**实战部署LNMP架构**
 
 ```
-git clonehttps://github.com/studcl/LNMP-Wordpress.git
+git clone https://github.com/studcl/LNMP-Wordpress.git
 LNMP-Wordpress/
+
 root@docker:~/LNMP-Wordpress# tree Dockerfile/
+
 Dockerfile/
 ├── centos #centos由于repo已停止维护，所以暂不使用centos
 │   ├── mysql
