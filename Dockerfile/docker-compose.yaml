@@ -2,7 +2,7 @@ version: '3'
 services:
   php:
     container_name: php-wordpress
-    image: php-centos:1.0
+    image: lnmp-php:v1.1
     ports:
       - 9001:9000
     networks:
@@ -11,11 +11,11 @@ services:
       - ./data/wordpress/:/data/wordpress/
   nginx:
     container_name: nginx-wordpress
-    image: nginx-centos:1.0
+    image: lnmp-nginx:v1.1
     ports:
       - 8066:80
     volumes:
-      -  ./data/nginx.conf:/usr/local/nginx/conf/nginx.conf
+      -  ./ubuntu/nginx/nginx-wordpress.conf:/etc/nginx/nginx.conf
       - ./data/wordpress/:/data/wordpress/
     depends_on:
       - php
@@ -23,7 +23,7 @@ services:
       - wordpress
   mysql:
     container_name: mysql-wordpress
-    image: mysql-centos:1.0
+    image: lnmp-mysql:v1.2
     ports:
       - 3311:3306
     networks:

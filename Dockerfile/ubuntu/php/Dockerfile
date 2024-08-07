@@ -10,9 +10,9 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \  
     make \  
     pkg-config \
-    zlib1g-dev
+    zlib1g-dev && \
 #创建nginx用户
-RUN useradd -r -s /sbin/nologin nginx
+    useradd -r -s /sbin/nologin nginx
 
 # 添加PHP源代码并解压  
 ADD ./php-8.3.3.tar.gz /opt/  
@@ -40,7 +40,9 @@ RUN ./configure \
  && make install 
   
 COPY ./set-php-config.sh /opt/ 
-RUN bash /opt/set-php-config.sh
+RUN bash /opt/set-php-config.sh && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt
   
 # 暴露PHP-FPM端口  
 EXPOSE 9000  
